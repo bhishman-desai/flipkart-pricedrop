@@ -1,22 +1,25 @@
 import smtplib
-from sys import exit
-
 import requests
 from bs4 import BeautifulSoup
 from twilio.rest import Client
 
+def initt():
+    global URL_list
+    global price_check
+    global headers
+    """ Add products and prices in respective arrays """
+    URL_list = [
+        'https://www.flipkart.com/hp-omen-ryzen-5-hexa-core-4600h-8-gb-512-gb-ssd-windows-10-home-6-graphics-nvidia-geforce-gtx-1660-ti-15-en0002ax-gaming-laptop/p/itm8837de99c3094?pid=COMFSTFFCG7CQW52&lid=LSTCOMFSTFFCG7CQW52SKMQBE&marketplace=FLIPKART&fm=neo%2Fmerchandising&iid=M_9d38bbbc-8bf9-42a0-8457-5b1886462f3d_6_PFK4M0QPCBD3_MC.COMFSTFFCG7CQW52&ppt=clp&ppn=gaming-laptops-store&ssid=r97gc6koy80000001597905111895&otracker=clp_pmu_v2_HP%2BGaming%2BLaptops_2_6.productCard.PMU_V2_HP%2BGaming%2BLaptops_gaming-laptops-store_COMFSTFFCG7CQW52_neo%2Fmerchandising_1&otracker1=clp_pmu_v2_PINNED_neo%2Fmerchandising_HP%2BGaming%2BLaptops_LIST_productCard_cc_2_NA_view-all&cid=COMFSTFFCG7CQW52',
+        'https://www.flipkart.com/mivi-mfi-certified-6ft-long-nylon-braided-original-tough-2-m-lightning-cable/p/itmeguz74zdhaxrz?pid=ACCEGUZ7ZEUBBDPB&lid=LSTACCEGUZ7ZEUBBDPBXQ2JKA&marketplace=FLIPKART&spotlightTagId=BestsellerId_tyy%2F4mr%2F3nu&srno=s_1_1&otracker=AS_QueryStore_OrganicAutoSuggest_1_4_na_na_na&otracker1=AS_QueryStore_OrganicAutoSuggest_1_4_na_na_na&fm=SEARCH&iid=77bce695-4fbf-4893-8d9b-12c0d8a6e16e.ACCEGUZ7ZEUBBDPB.SEARCH&ppt=sp&ppn=sp&ssid=jwcdkj12jk0000001601649096382&qH=801895e1b7efeefc'
+    ]
+    price_check = [60000.0, 5000.0]
 
-""" Add products and prices in respective arrays """
-URL_list = [
-    'https://www.flipkart.com/hp-omen-ryzen-5-hexa-core-4600h-8-gb-512-gb-ssd-windows-10-home-6-graphics-nvidia-geforce-gtx-1660-ti-15-en0002ax-gaming-laptop/p/itm8837de99c3094?pid=COMFSTFFCG7CQW52&lid=LSTCOMFSTFFCG7CQW52SKMQBE&marketplace=FLIPKART&fm=neo%2Fmerchandising&iid=M_9d38bbbc-8bf9-42a0-8457-5b1886462f3d_6_PFK4M0QPCBD3_MC.COMFSTFFCG7CQW52&ppt=clp&ppn=gaming-laptops-store&ssid=r97gc6koy80000001597905111895&otracker=clp_pmu_v2_HP%2BGaming%2BLaptops_2_6.productCard.PMU_V2_HP%2BGaming%2BLaptops_gaming-laptops-store_COMFSTFFCG7CQW52_neo%2Fmerchandising_1&otracker1=clp_pmu_v2_PINNED_neo%2Fmerchandising_HP%2BGaming%2BLaptops_LIST_productCard_cc_2_NA_view-all&cid=COMFSTFFCG7CQW52',
-    'https://www.flipkart.com/mivi-mfi-certified-6ft-long-nylon-braided-original-tough-2-m-lightning-cable/p/itmeguz74zdhaxrz?pid=ACCEGUZ7ZEUBBDPB&lid=LSTACCEGUZ7ZEUBBDPBXQ2JKA&marketplace=FLIPKART&spotlightTagId=BestsellerId_tyy%2F4mr%2F3nu&srno=s_1_1&otracker=AS_QueryStore_OrganicAutoSuggest_1_4_na_na_na&otracker1=AS_QueryStore_OrganicAutoSuggest_1_4_na_na_na&fm=SEARCH&iid=77bce695-4fbf-4893-8d9b-12c0d8a6e16e.ACCEGUZ7ZEUBBDPB.SEARCH&ppt=sp&ppn=sp&ssid=jwcdkj12jk0000001601649096382&qH=801895e1b7efeefc'
-]
-price_check = [60000.0, 5000.0]
-
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                          'Chrome/79.0.3945.130 Safari/537.36'}
 
+
 def check_price():
+    initt()
     page_list = []
     soup_list = []
     title_list = []
@@ -38,6 +41,8 @@ def check_price():
         if price_list[x] < price_check[x]:
             sendmail(title_list[x], price_list[x], URL_list[x])
             sendsms(title_list[x], price_list[x], URL_list[x])
+
+    return title_list, price_list
 
 
 def sendmail(t, p, URL):
@@ -73,8 +78,3 @@ def sendsms(t, p, URL):
     )
     if message.sid:
         print('SMS Sent')
-
-
-while True:
-    check_price()
-    exit()
