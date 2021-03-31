@@ -4,7 +4,7 @@ from sys import exit
 import requests
 from bs4 import BeautifulSoup
 from twilio.rest import Client
-from win10toast import ToastNotifier
+
 
 """ Add products and prices in respective arrays """
 URL_list = [
@@ -15,8 +15,6 @@ price_check = [60000.0, 500.0]
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                          'Chrome/79.0.3945.130 Safari/537.36'}
-toast_notifier = ToastNotifier()
-
 
 def check_price():
     page_list = []
@@ -38,8 +36,6 @@ def check_price():
 
     for x in range(len(price_list)):
         if price_list[x] < price_check[x]:
-            toast_notifier.show_toast(title=title_list[x], msg='Current Price is ' + str(price_list[x]),
-                                      icon_path='FlipkartIcon.ico', duration=8)
             sendmail(title_list[x], price_list[x], URL_list[x])
             sendsms(title_list[x], price_list[x], URL_list[x])
 
